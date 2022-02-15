@@ -1,0 +1,2 @@
+rootProject.name='bugzilla app'
+include ':app'
