@@ -12,7 +12,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-class BugListFragmentViewModel @Inject constructor() : ViewModel() {
+class BugListFragmentViewModel  : ViewModel() {
 
     companion object {
 

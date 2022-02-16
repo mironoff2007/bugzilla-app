@@ -1,7 +1,7 @@
 package com.mironov.bugzillaapp.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.mironov.bugzillaapp.R
 import com.mironov.bugzillaapp.ui.BugsListFragment.Companion.TAG_BUGS_LIST_FRAGMENT
 
@@ -21,9 +21,7 @@ class MainActivity : AppCompatActivity() {
                     BugsListFragment(), TAG_BUGS_LIST_FRAGMENT
                 )
                 .commit()
-
         }
     }
-
 }
 
