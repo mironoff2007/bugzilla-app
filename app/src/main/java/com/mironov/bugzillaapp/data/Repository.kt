@@ -9,9 +9,9 @@ import java.util.*
 import javax.inject.Inject
 
 class Repository @Inject constructor(
-    protected val dataShared: Any, protected  val bugsDb: BugsDatabase) {
+    protected val dataShared: Any, protected  val bugsDb: BugsDatabase):BugsWebRepository {
 
-    fun getBugsFromNetworkByDate(date:String): Call<ApiResponse> {
+    override fun getBugsFromNetworkByDate(date:String): Call<ApiResponse> {
         return NetworkService
             .getJSONApi().getBugsByDate(date)
     }
