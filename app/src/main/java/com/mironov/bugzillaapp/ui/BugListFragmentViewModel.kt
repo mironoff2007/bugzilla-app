@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mironov.bugzillaapp.data.Repository
 import com.mironov.bugzillaapp.data.retrofit.ApiResponse
-import com.mironov.bugzillaapp.domain.DateUtil
-import com.mironov.bugzillaapp.domain.Status
+import com.mironov.bugzillaapp.domain.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,7 +22,7 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
 
     var status = MutableLiveData<Status>()
 
-    fun getTodayBugs() {
+    fun getTodayBugs(filterOs:String,orderBy:SortBy) {
         repository.getBugsFromNetworkByDate(DateUtil.getTodayDate())
             ?.enqueue(object : Callback<ApiResponse?> {
                 override fun onResponse(
@@ -37,7 +37,7 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
                             viewModelScope.launch(Dispatchers.IO) {
                                 repository.saveBugsToDb(bugs!!)
 
-                                status.postValue(Status.DATA(bugs))
+                              getBugs(filterOs,orderBy)
                             }
                         } else {
                             status.postValue(Status.EMPTY)
@@ -54,4 +54,38 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
             })
     }
 
+    fun getBugs(opSys: String, orderBy: SortBy) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (opSys.isBlank()) {
+                repository.getAllBugsFromDb().onEach {bugs->
+                    sortBugs(orderBy, bugs as ArrayList<Bug>)
+                    status.postValue(Status.DATA(bugs))
+
+                }
+            } else {
+                repository.getAllBugsFromDbByOs(opSys).onEach {bugs->
+                    sortBugs(orderBy, bugs as ArrayList<Bug>)
+                    status.postValue(Status.DATA(bugs))
+                }
+            }
+
+        }
+    }
+
+    private fun sortBugs(orderBy: SortBy,bugs:ArrayList<Bug>) {
+        when (orderBy) {
+           SortBy.PRODUCT ->{
+               bugs.sortBy{bug->bug.product}
+           }
+
+            SortBy.STATUS ->{
+                bugs.sortBy{bug->bug.status}
+            }
+
+            SortBy.TIME ->{
+
+            }
+        }
+    }
 }
+

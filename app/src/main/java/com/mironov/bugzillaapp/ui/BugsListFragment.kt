@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mironov.bugzillaapp.R
 import com.mironov.bugzillaapp.appComponent
 import com.mironov.bugzillaapp.databinding.FragmentBugsListBinding
+import com.mironov.bugzillaapp.domain.SortBy
 import com.mironov.bugzillaapp.domain.Status
 import com.mironov.bugzillaapp.ui.DetailsFragment.Companion.KEY_BUG
 import com.mironov.bugzillaapp.ui.DetailsFragment.Companion.TAG_DETAILS_FRAGMENT
@@ -34,6 +35,9 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     private var loading = false
 
+    private var sortBy=SortBy.TIME
+
+    private var filterOs=""
 
     private val listener = object : BugsAdapter.ItemClickListener<BugViewHolder> {
         override fun onClickListener(item: BugViewHolder) {
@@ -101,7 +105,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                     DividerItemDecoration.VERTICAL
                 )
             )
-           viewModel.getTodayBugs()
+           viewModel.getTodayBugs(filterOs,sortBy)
         }
 
     }

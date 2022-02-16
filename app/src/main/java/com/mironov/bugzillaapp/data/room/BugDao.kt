@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.mironov.bugzillaapp.domain.Bug
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BugDao {
@@ -27,6 +28,9 @@ interface BugDao {
     fun readBugsByDate(query: SupportSQLiteQuery): LiveData<List<Bug>>
 
     @Query("SELECT * FROM Bug")
-    fun readAllBugs(): LiveData<List<Bug>>
+    fun readAllBugs(): Flow<List<Bug>>
+
+    @Query("SELECT * FROM Bug Where Bug.opSys=opSys")
+    fun readBugsByOs(opSys:String): Flow<List<Bug>>
 
 }
