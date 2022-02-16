@@ -10,8 +10,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mironov.bugzillaapp.R
 import com.mironov.bugzillaapp.databinding.FragmentBugsListBinding
 import com.mironov.bugzillaapp.domain.Status
+import com.mironov.bugzillaapp.ui.DetailsFragment.Companion.KEY_BUG
+import com.mironov.bugzillaapp.ui.DetailsFragment.Companion.TAG_DETAILS_FRAGMENT
 import com.mironov.bugzillaapp.ui.recycler.BugViewHolder
 import com.mironov.bugzillaapp.ui.recycler.BugsAdapter
 
@@ -34,16 +37,16 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
     private val listener = object : BugsAdapter.ItemClickListener<BugViewHolder> {
         override fun onClickListener(item: BugViewHolder) {
 
-            /*val fragment = DetailsFragment()
+            val fragment = DetailsFragment()
             val argumentsDetails = Bundle()
-            argumentsDetails.putParcelable(KEY_BUG, adapter!!.articles[item.position])
+            argumentsDetails.putParcelable(KEY_BUG, adapter!!.bugs[item.position])
 
             fragment.arguments = argumentsDetails
 
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment, TAG_DETAILS_FRAGMENT)
-                .addToBackStack(TAG_NEWS_LIST_FRAGMENT)
-                .commit()*/
+                .addToBackStack(TAG_BUGS_LIST_FRAGMENT)
+                .commit()
         }
     }
 
