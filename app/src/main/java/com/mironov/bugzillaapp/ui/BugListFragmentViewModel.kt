@@ -34,8 +34,10 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
 
                        status.postValue(Status.DATA(bugs))
                    }
+                   else{
                    //тут надо сообщение из error body из стрима перевести в стринг
                    status.postValue(Status.ERROR(response.errorBody().toString()))
+                   }
                }
 
                override fun onFailure(call: Call<ApiResponse?>, t: Throwable) {
