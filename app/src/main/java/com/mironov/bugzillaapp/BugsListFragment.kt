@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.RequestManager
 import com.mironov.bugzillaapp.databinding.FragmentBugsListBinding
+import com.mironov.bugzillaapp.domain.Status
 import com.mironov.newsapp.ui.screens.BaseFragment
-import javax.inject.Inject
 
 class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
@@ -20,7 +20,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
         const val TAG_BUGS_LIST_FRAGMENT = "TAG_BUGS_LIST_FRAGMENT"
     }
 
-    private lateinit var viewModel: FragmentBugsListBinding
+    private lateinit var viewModel: BugListFragmentViewModel
 
     private var adapter: BugsAdapter?=null
 
@@ -35,7 +35,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
             val fragment = DetailsFragment()
             val argumentsDetails = Bundle()
-            argumentsDetails.putParcelable(KEY_ARTICLE, adapter!!.articles[item.position])
+            argumentsDetails.putParcelable(KEY_BUG, adapter!!.articles[item.position])
 
             fragment.arguments = argumentsDetails
 
@@ -50,18 +50,17 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
     override fun initBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): FragmentNewsListBinding =
-        FragmentNewsListBinding.inflate(inflater, container, false)
+    ): FragmentBugsListBinding =
+        FragmentBugsListBinding.inflate(inflater, container, false)
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        requireContext().appComponent.inject(this)
+        viewModel = ViewModelProvider(this).get(BugListFragmentViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel =
-            requireContext().appComponent.factory.create(NewsListFragmentViewModel::class.java)
+
 
         setupScrollEndListener()
 
@@ -97,7 +96,6 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
             //viewModel.getBugs
         }
 
-        binding.searchButton.setOnClickListener { search() }
     }
 
     /*private fun search() {
@@ -114,9 +112,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1) && !loading) {
-                    loading = true
-                    daysBack++
-                    viewModel.getNews(daysBack)
+
 
                 }
                 daysBackLast=daysBack

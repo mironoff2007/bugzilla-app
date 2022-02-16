@@ -1,10 +1,7 @@
 package com.mironov.bugzillaapp
 
 import com.mironov.bugzillaapp.retrofit.ApiResponse
-import com.mironov.bugzillaapp.retrofit.Bug
-import com.mironov.bugzillaapp.retrofit.BugApi
 import com.mironov.bugzillaapp.retrofit.NetworkService
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import retrofit2.Call

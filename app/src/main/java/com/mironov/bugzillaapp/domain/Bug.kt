@@ -1,4 +1,4 @@
-package com.mironov.bugzillaapp.retrofit
+package com.mironov.bugzillaapp.domain
 
 import com.google.gson.annotations.SerializedName
 
