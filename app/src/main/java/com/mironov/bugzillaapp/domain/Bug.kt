@@ -1,8 +1,13 @@
-package com.mironov.bugzillaapp.retrofit
+package com.mironov.bugzillaapp.domain
 
+import android.os.Parcelable
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
-class Bug {
+@Parcelize
+@Entity
+class Bug : Parcelable {
     @SerializedName("id")
     val id: String? = null
 

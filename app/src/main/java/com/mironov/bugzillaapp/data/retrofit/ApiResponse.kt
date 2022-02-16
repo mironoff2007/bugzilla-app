@@ -1,6 +1,7 @@
-package com.mironov.bugzillaapp.retrofit
+package com.mironov.bugzillaapp.data.retrofit
 
 import com.google.gson.annotations.SerializedName
+import com.mironov.bugzillaapp.domain.Bug
 import java.util.*
 
 class ApiResponse {

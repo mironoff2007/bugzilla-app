@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">bugzilla app</string>
+    <string name="product">product-</string>
+    <string name="os">os-</string>
+    <string name="status">status-</string>
+    <string name="classification">classification-</string>
+    <string name="summary">"summary : "</string>
+    <string name="id">"id - "</string>
 </resources>

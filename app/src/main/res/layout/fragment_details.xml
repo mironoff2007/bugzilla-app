@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/id"
+        android:textSize="@dimen/details_text_size" />
+
+    <TextView
+        android:id="@+id/product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/product"
+        android:textSize="@dimen/details_text_size" />
+
+    <TextView
+        android:id="@+id/os"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/os"
+        android:textSize="@dimen/details_text_size" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/status"
+        android:textSize="@dimen/details_text_size" />
+
+    <TextView
+        android:id="@+id/classification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/classification"
+        android:textSize="@dimen/details_text_size" />
+
+    <TextView
+        android:id="@+id/summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/summary"
+        android:textSize="@dimen/details_text_size"
+        android:textAlignment="center"/>
+
+</LinearLayout>
