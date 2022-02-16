@@ -12,13 +12,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-class BugListFragmentViewModel  : ViewModel() {
+class BugListFragmentViewModel @Inject constructor() : ViewModel() {
 
-    companion object {
-
-    }
-
-   private val repository: Repository=Repository()
+    @Inject
+    protected lateinit var repository: Repository
 
     var status = MutableLiveData<Status>()
 

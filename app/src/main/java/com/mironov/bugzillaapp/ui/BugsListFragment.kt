@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mironov.bugzillaapp.R
+import com.mironov.bugzillaapp.appComponent
 import com.mironov.bugzillaapp.databinding.FragmentBugsListBinding
 import com.mironov.bugzillaapp.domain.Status
 import com.mironov.bugzillaapp.ui.DetailsFragment.Companion.KEY_BUG
@@ -59,11 +60,14 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        viewModel = ViewModelProvider(this).get(BugListFragmentViewModel::class.java)
+        requireContext().appComponent.inject(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel =
+            requireContext().appComponent.factory.create(BugListFragmentViewModel::class.java)
 
 
         //setupScrollEndListener()

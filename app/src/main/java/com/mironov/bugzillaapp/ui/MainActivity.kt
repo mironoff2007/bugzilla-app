@@ -3,6 +3,7 @@ package com.mironov.bugzillaapp.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.mironov.bugzillaapp.R
+import com.mironov.bugzillaapp.appComponent
 import com.mironov.bugzillaapp.ui.BugsListFragment.Companion.TAG_BUGS_LIST_FRAGMENT
 
 class MainActivity : AppCompatActivity() {
@@ -13,6 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        appComponent.inject(this)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
