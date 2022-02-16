@@ -1,4 +1,4 @@
-package com.mironov.bugzillaapp
+package com.mironov.bugzillaapp.ui
 
 import android.content.Context
 import android.os.Bundle
@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mironov.bugzillaapp.databinding.FragmentBugsListBinding
 import com.mironov.bugzillaapp.domain.Status
-import com.mironov.newsapp.ui.screens.BaseFragment
+import com.mironov.bugzillaapp.ui.recycler.BugViewHolder
+import com.mironov.bugzillaapp.ui.recycler.BugsAdapter
 
 class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
@@ -30,10 +31,10 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
     private var loading = false
 
 
-    private val listener = object : BugsAdapter.ItemClickListener<ArticleViewHolder> {
-        override fun onClickListener(item: ArticleViewHolder) {
+    private val listener = object : BugsAdapter.ItemClickListener<BugViewHolder> {
+        override fun onClickListener(item: BugViewHolder) {
 
-            val fragment = DetailsFragment()
+            /*val fragment = DetailsFragment()
             val argumentsDetails = Bundle()
             argumentsDetails.putParcelable(KEY_BUG, adapter!!.articles[item.position])
 
@@ -42,7 +43,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment, TAG_DETAILS_FRAGMENT)
                 .addToBackStack(TAG_NEWS_LIST_FRAGMENT)
-                .commit()
+                .commit()*/
         }
     }
 
@@ -62,7 +63,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        setupScrollEndListener()
+        //setupScrollEndListener()
 
         observe()
 
@@ -93,7 +94,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                     DividerItemDecoration.VERTICAL
                 )
             )
-            //viewModel.getBugs
+           viewModel.getTodayBugs()
         }
 
     }
@@ -126,7 +127,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                 is Status.DATA -> {
                     loading = false
                     binding.progressBar.visibility = View.GONE
-                    adapter!!.articles.addAll(status.articles!!)
+                    adapter!!.bugs.addAll(status.articles!!)
                     adapter!!.notifyDataSetChanged()
                 }
                 is Status.LOADING -> {

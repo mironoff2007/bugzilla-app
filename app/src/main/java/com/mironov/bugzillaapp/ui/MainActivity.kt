@@ -1,8 +1,9 @@
-package com.mironov.bugzillaapp
+package com.mironov.bugzillaapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.mironov.bugzillaapp.BugsListFragment.Companion.TAG_BUGS_LIST_FRAGMENT
+import com.mironov.bugzillaapp.R
+import com.mironov.bugzillaapp.ui.BugsListFragment.Companion.TAG_BUGS_LIST_FRAGMENT
 
 class MainActivity : AppCompatActivity() {
 
