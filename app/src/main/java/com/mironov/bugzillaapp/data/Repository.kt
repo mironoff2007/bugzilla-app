@@ -10,7 +10,7 @@ import java.util.*
 import javax.inject.Inject
 
 class Repository @Inject constructor(
-    protected val dataShared: Any, protected  val bugsDb: BugsDatabase):BugsWebRepository {
+    protected val dataShared: DataShared, protected  val bugsDb: BugsDatabase):BugsWebRepository {
 
     override fun getBugsFromNetworkByDate(date:String): Call<ApiResponse> {
         return NetworkService
@@ -28,5 +28,9 @@ class Repository @Inject constructor(
 
     fun getAllBugsFromDbByOs(opSys:String): Flow<List<Bug>> {
         return bugsDb.bugsDao().readBugsByOs(opSys)
+    }
+
+    fun saveFilterOption(filter:String){
+        dataShared.saveOsFilter(filter)
     }
 }

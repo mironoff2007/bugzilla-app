@@ -38,7 +38,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     private var sortBy=SortBy.TIME
 
-    private var filterOs="Linux"
+    private lateinit var filterOs:String
 
     private val listener = object : BugsAdapter.ItemClickListener<BugViewHolder> {
         override fun onClickListener(item: BugViewHolder) {
@@ -73,6 +73,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
         viewModel =
             requireContext().appComponent.factory.create(BugListFragmentViewModel::class.java)
+
 
 
         //setupScrollEndListener()

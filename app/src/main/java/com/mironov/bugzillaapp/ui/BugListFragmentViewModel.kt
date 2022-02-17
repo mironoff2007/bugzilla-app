@@ -58,13 +58,13 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
     fun getBugs(opSys: String, orderBy: SortBy) {
         viewModelScope.launch(Dispatchers.Main) {
             if (opSys.isBlank()) {
-                repository.getAllBugsFromDb().collect { bugs->
+                repository.getAllBugsFromDb().collect{ bugs->
                     sortBugs(orderBy, bugs as ArrayList<Bug>)
                     status.postValue(Status.DATA(bugs))}
                 }
 
         else {
-                repository.getAllBugsFromDbByOs(opSys).collect {bugs->
+                repository.getAllBugsFromDbByOs(opSys).collect{bugs->
                     sortBugs(orderBy, bugs as ArrayList<Bug>)
                     status.postValue(Status.DATA(bugs))
                 }

@@ -8,4 +8,13 @@
     <string name="id">"id - "</string>
     <string name="bugs_db_name">bugs_db_name</string>
     <string name="no_bugs_today">сегодня нет багов</string>
+
+    <string-array name="osFilter">
+        <item>All</item>
+        <item>Linux</item>
+        <item>Android</item>
+        <item>macOs</item>
+        <item>Windows</item>
+        <item>Unspecified</item>
+    </string-array>
 </resources>

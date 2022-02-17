@@ -8,6 +8,7 @@ import com.mironov.bugzillaapp.data.room.BugsDatabase
 import com.mironov.bugzillaapp.ui.BugListFragmentViewModel
 import com.mironov.bugzillaapp.ui.BugsListFragment
 import com.mironov.bugzillaapp.ui.MainActivity
+import com.mironov.bugzillaapp.ui.PrefsFragment
 import com.mironov.newsapp.di.*
 import dagger.*
 import dagger.multibindings.IntoMap
@@ -19,9 +20,8 @@ annotation class AppScope
 @Component(modules = [AppModule::class, RetrofitModule::class, AppBindsModule::class,  RoomModule::class])
 interface AppComponent  {
     fun inject(activity: MainActivity)
-    fun inject(bugsListFragment: BugsListFragment) {
-
-    }
+    fun inject(bugsListFragment: BugsListFragment)
+    fun inject(prefsFragment: PrefsFragment)
 
 
     val factory: MultiViewModelFactory
