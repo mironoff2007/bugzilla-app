@@ -35,6 +35,7 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
             classification.text = resources.getString(R.string.classification) + bug.classification
             status.text = resources.getString(R.string.status) + bug.status
             summary.text = resources.getString(R.string.summary) + bug.summary
+            time.text = resources.getString(R.string.time) + bug.creationTime
         }
     }
 
