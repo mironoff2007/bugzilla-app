@@ -3,9 +3,10 @@ package com.mironov.bugzillaapp.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,16 +28,16 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     private lateinit var viewModel: BugListFragmentViewModel
 
-    private var adapter: BugsAdapter?=null
+    private var adapter: BugsAdapter? = null
 
     private var daysBack = 0
     private var daysBackLast = 0
 
     private var loading = false
 
-    private var sortBy=SortBy.TIME
+    private var sortBy = SortBy.TIME
 
-    private lateinit var filterOs:String
+    private lateinit var filterOs: String
 
     private val listener = object : BugsAdapter.ItemClickListener<BugViewHolder> {
         override fun onClickListener(item: BugViewHolder) {
@@ -73,12 +74,10 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
             requireContext().appComponent.factory.create(BugListFragmentViewModel::class.java)
 
 
-
         //setupScrollEndListener()
 
-        observe()
 
-        if(adapter!=null){
+        if (adapter != null) {
 
             val layoutManager = LinearLayoutManager(this.requireContext())
             binding.recyclerView.layoutManager = layoutManager
@@ -91,8 +90,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
             )
 
             adapter!!.notifyDataSetChanged()
-        }
-        else{
+        } else {
             adapter = BugsAdapter()
             adapter!!.listener = listener
 
@@ -105,9 +103,13 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                     DividerItemDecoration.VERTICAL
                 )
             )
-           viewModel.getTodayBugs(filterOs,sortBy)
+
+
         }
 
+        observe()
+        observeFilter()
+        viewModel.getFilterParam()
     }
 
     private fun setupScrollEndListener() {
@@ -118,7 +120,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
 
                 }
-                daysBackLast=daysBack
+                daysBackLast = daysBack
             }
         })
     }
@@ -138,7 +140,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is Status.ERROR -> {
-                    daysBack=daysBackLast
+                    daysBack = daysBackLast
                     loading = false
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), status.message, Toast.LENGTH_LONG).show()
@@ -146,9 +148,22 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                 is Status.ERROR -> {
                     loading = false
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), requireContext().resources.getString(R.string.no_bugs_today), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        requireContext().resources.getString(R.string.no_bugs_today),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
+        }
+    }
+
+
+    private fun observeFilter(){
+        viewModel.filterParam.observe(viewLifecycleOwner) { param ->
+            filterOs = param
+
+            viewModel.getTodayBugs(filterOs, sortBy)
         }
     }
 

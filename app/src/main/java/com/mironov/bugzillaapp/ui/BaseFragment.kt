@@ -19,6 +19,7 @@ abstract class BaseFragment<B : ViewBinding> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+        setHasOptionsMenu(true)
         _viewBinding = initBinding(inflater, container)
         return binding.root
     }

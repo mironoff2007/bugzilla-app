@@ -33,4 +33,8 @@ class Repository @Inject constructor(
     fun saveFilterOption(filter:String){
         dataShared.saveOsFilter(filter)
     }
+
+    fun getFilterOption():String{
+       return dataShared.getOsFilter()
+    }
 }

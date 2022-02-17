@@ -22,6 +22,8 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
 
     var status = MutableLiveData<Status>()
 
+    var filterParam = MutableLiveData<String>()
+
     fun getTodayBugs(filterOs:String,orderBy:SortBy) {
         status.postValue(Status.LOADING)
         repository.getBugsFromNetworkByDate(DateUtil.getPreviousDayDate(1))
@@ -86,6 +88,10 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
 
             }
         }
+    }
+
+    fun getFilterParam() {
+       filterParam.postValue(repository.getFilterOption())
     }
 }
 

@@ -3,9 +3,7 @@ package com.mironov.bugzillaapp.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.mironov.bugzillaapp.R
@@ -13,6 +11,7 @@ import com.mironov.bugzillaapp.appComponent
 import com.mironov.bugzillaapp.data.Repository
 import com.mironov.bugzillaapp.databinding.FragmentPrefsBinding
 import javax.inject.Inject
+
 
 class PrefsFragment : BaseFragment<FragmentPrefsBinding>() {
 
@@ -27,6 +26,10 @@ class PrefsFragment : BaseFragment<FragmentPrefsBinding>() {
         container: ViewGroup?
     ): FragmentPrefsBinding =
         FragmentPrefsBinding.inflate(inflater, container, false)
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -44,7 +47,12 @@ class PrefsFragment : BaseFragment<FragmentPrefsBinding>() {
         val array= resources.getStringArray(R.array.osFilter)
         val adapter: ArrayAdapter<*> = ArrayAdapter<String>(requireContext(), R.layout.spinner_item,array)
         adapter.setDropDownViewResource(R.layout.spinner_item)
+
+        val filterOption=repository.getFilterOption()
+
         binding.osSpinner.adapter = adapter
+
+        binding.osSpinner.setSelection(array.indexOf(filterOption))
 
         binding.osSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -68,4 +76,5 @@ class PrefsFragment : BaseFragment<FragmentPrefsBinding>() {
     fun saveFilterOption(filter:String){
         repository.saveFilterOption(filter)
     }
+
 }
