@@ -1,16 +1,13 @@
 package com.mironov.bugzillaapp.ui
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mironov.bugzillaapp.R
 import com.mironov.bugzillaapp.databinding.FragmentDetailsBinding
 import com.mironov.bugzillaapp.domain.Bug
-import javax.inject.Inject
 
 class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
 

@@ -30,7 +30,7 @@ interface BugDao {
     @Query("SELECT * FROM Bug")
     fun readAllBugs(): Flow<List<Bug>>
 
-    @Query("SELECT * FROM Bug Where Bug.opSys=opSys")
-    fun readBugsByOs(opSys:String): Flow<List<Bug>>
+    @Query("SELECT * FROM Bug Where Bug.opSys=:os")
+    fun readBugsByOs(os:String): Flow<List<Bug>>
 
 }

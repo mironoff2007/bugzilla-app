@@ -1,5 +1,6 @@
 package com.mironov.bugzillaapp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -37,7 +38,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     private var sortBy=SortBy.TIME
 
-    private var filterOs=""
+    private var filterOs="Linux"
 
     private val listener = object : BugsAdapter.ItemClickListener<BugViewHolder> {
         override fun onClickListener(item: BugViewHolder) {
@@ -110,15 +111,6 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     }
 
-    /*private fun search() {
-        if(binding.searchField.text.isNotBlank()){
-            viewModel.getNews(0)
-        }
-        else{
-            viewModel.searchNews(binding.searchField.text.toString())
-        }
-    }*/
-
     private fun setupScrollEndListener() {
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -132,6 +124,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
         })
     }
 
+    @SuppressLint("ResourceType")
     private fun observe() {
         viewModel.status.observe(viewLifecycleOwner) { status ->
             when (status) {
@@ -151,7 +144,10 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), status.message, Toast.LENGTH_LONG).show()
                 }
-                else -> {
+                is Status.ERROR -> {
+                    loading = false
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), requireContext().resources.getString(R.string.no_bugs_today), Toast.LENGTH_LONG).show()
                 }
             }
         }

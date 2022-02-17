@@ -8,7 +8,7 @@ import com.mironov.bugzillaapp.data.Repository
 import com.mironov.bugzillaapp.data.retrofit.ApiResponse
 import com.mironov.bugzillaapp.domain.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,7 +23,8 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
     var status = MutableLiveData<Status>()
 
     fun getTodayBugs(filterOs:String,orderBy:SortBy) {
-        repository.getBugsFromNetworkByDate(DateUtil.getTodayDate())
+        status.postValue(Status.LOADING)
+        repository.getBugsFromNetworkByDate(DateUtil.getPreviousDayDate(1))
             ?.enqueue(object : Callback<ApiResponse?> {
                 override fun onResponse(
                     call: Call<ApiResponse?>,
@@ -55,20 +56,19 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
     }
 
     fun getBugs(opSys: String, orderBy: SortBy) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             if (opSys.isBlank()) {
-                repository.getAllBugsFromDb().onEach {bugs->
+                repository.getAllBugsFromDb().collect { bugs->
                     sortBugs(orderBy, bugs as ArrayList<Bug>)
-                    status.postValue(Status.DATA(bugs))
-
+                    status.postValue(Status.DATA(bugs))}
                 }
-            } else {
-                repository.getAllBugsFromDbByOs(opSys).onEach {bugs->
+
+        else {
+                repository.getAllBugsFromDbByOs(opSys).collect {bugs->
                     sortBugs(orderBy, bugs as ArrayList<Bug>)
                     status.postValue(Status.DATA(bugs))
                 }
             }
-
         }
     }
 

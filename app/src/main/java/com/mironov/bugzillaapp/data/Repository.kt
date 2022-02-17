@@ -1,6 +1,5 @@
 package com.mironov.bugzillaapp.data
 
-import androidx.lifecycle.LiveData
 import com.mironov.bugzillaapp.data.retrofit.ApiResponse
 import com.mironov.bugzillaapp.data.retrofit.NetworkService
 import com.mironov.bugzillaapp.data.room.BugsDatabase
