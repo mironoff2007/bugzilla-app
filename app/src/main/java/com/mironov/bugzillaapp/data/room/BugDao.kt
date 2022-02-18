@@ -27,10 +27,10 @@ interface BugDao {
     @RawQuery(observedEntities = [Bug::class])
     fun readBugsByDate(query: SupportSQLiteQuery): LiveData<List<Bug>>
 
-    @Query("SELECT * FROM Bug")
-    fun readAllBugs(): Flow<List<Bug>>
+    @Query("SELECT * FROM Bug Where Bug.creationTime Like :date")
+    fun readAllBugsByDate(date: String): Flow<List<Bug>>
 
-    @Query("SELECT * FROM Bug Where Bug.opSys=:os")
-    fun readBugsByOs(os:String): Flow<List<Bug>>
+    @Query("SELECT * FROM Bug Where Bug.opSys Like :os AND Bug.creationTime Like :date")
+    fun readBugsByOsAndDate(os:String,date: String): Flow<List<Bug>>
 
 }

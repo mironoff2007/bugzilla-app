@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mironov.bugzillaapp.R
 import com.mironov.bugzillaapp.appComponent
 import com.mironov.bugzillaapp.databinding.FragmentBugsListBinding
+import com.mironov.bugzillaapp.domain.DateUtil
 import com.mironov.bugzillaapp.domain.SortBy
 import com.mironov.bugzillaapp.domain.Status
 import com.mironov.bugzillaapp.ui.DetailsFragment.Companion.KEY_BUG
@@ -37,7 +38,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     private var sortBy = SortBy.TIME
 
-    private lateinit var filterOs: String
+    private var filterOs: String? = null
 
     private val listener = object : BugsAdapter.ItemClickListener<BugViewHolder> {
         override fun onClickListener(item: BugViewHolder) {
@@ -150,6 +151,15 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(
                         requireContext(),
+                        status.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                is Status.EMPTY -> {
+                    loading = false
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
                         requireContext().resources.getString(R.string.no_bugs_today),
                         Toast.LENGTH_LONG
                     ).show()
@@ -159,13 +169,14 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
     }
 
 
-    private fun observeFilter(){
+    private fun observeFilter() {
         viewModel.filterParam.observe(viewLifecycleOwner) { param ->
-            filterOs = param
-
-            viewModel.getTodayBugs(filterOs, sortBy)
+            if (filterOs != param) {
+                adapter!!.bugs?.clear()
+                adapter!!.notifyDataSetChanged()
+                filterOs = param
+                viewModel.getBugs(filterOs!!, sortBy,DateUtil.getTodayDate())
+            }
         }
     }
-
-
 }

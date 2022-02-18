@@ -22,12 +22,12 @@ class Repository @Inject constructor(
         bugsDb.bugsDao().insertAllBugs(bugs)
     }
 
-    fun getAllBugsFromDb(): Flow<List<Bug>> {
-       return bugsDb.bugsDao().readAllBugs()
+    fun getAllBugsFromDbByDate(date: String): Flow<List<Bug>> {
+       return bugsDb.bugsDao().readAllBugsByDate("%$date%")
     }
 
-    fun getAllBugsFromDbByOs(opSys:String): Flow<List<Bug>> {
-        return bugsDb.bugsDao().readBugsByOs(opSys)
+    fun getAllBugsFromDbByOsAndDate(opSys:String, date: String): Flow<List<Bug>> {
+        return bugsDb.bugsDao().readBugsByOsAndDate(opSys, "%$date%")
     }
 
     fun saveFilterOption(filter:String){

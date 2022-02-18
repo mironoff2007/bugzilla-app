@@ -1,6 +1,5 @@
 package com.mironov.bugzillaapp.ui
 
-
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,9 +23,9 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
 
     var filterParam = MutableLiveData<String>()
 
-    fun getTodayBugs(filterOs:String,orderBy:SortBy) {
+    private fun getTodayBugsWeb(filterOs: String, orderBy: SortBy, date: String) {
         status.postValue(Status.LOADING)
-        repository.getBugsFromNetworkByDate(DateUtil.getPreviousDayDate(1))
+        repository.getBugsFromNetworkByDate(date)
             ?.enqueue(object : Callback<ApiResponse?> {
                 override fun onResponse(
                     call: Call<ApiResponse?>,
@@ -39,10 +38,10 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
 
                             viewModelScope.launch(Dispatchers.IO) {
                                 repository.saveBugsToDb(bugs!!)
-
-                              getBugs(filterOs,orderBy)
+                                getBugs(filterOs, orderBy, date)
                             }
-                        } else {
+                        }
+                        else {
                             status.postValue(Status.EMPTY)
                         }
                     } else {
@@ -57,41 +56,48 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    fun getBugs(opSys: String, orderBy: SortBy) {
+    fun getBugs(opSys: String, orderBy: SortBy, date: String) {
         viewModelScope.launch(Dispatchers.Main) {
             if (opSys.isBlank()) {
-                repository.getAllBugsFromDb().collect{ bugs->
-                    sortBugs(orderBy, bugs as ArrayList<Bug>)
-                    status.postValue(Status.DATA(bugs))}
+                repository.getAllBugsFromDbByDate(date).collect { bugs ->
+                    postOrRequest(opSys, orderBy, date, bugs)
                 }
-
-        else {
-                repository.getAllBugsFromDbByOs(opSys).collect{bugs->
-                    sortBugs(orderBy, bugs as ArrayList<Bug>)
-                    status.postValue(Status.DATA(bugs))
+            } else {
+                repository.getAllBugsFromDbByOsAndDate(opSys,date).collect { bugs ->
+                    postOrRequest(opSys, orderBy, date, bugs)
                 }
             }
         }
     }
 
-    private fun sortBugs(orderBy: SortBy,bugs:ArrayList<Bug>) {
-        when (orderBy) {
-           SortBy.PRODUCT ->{
-               bugs.sortBy{bug->bug.product}
-           }
+    private fun postOrRequest(opSys: String, orderBy: SortBy, data: String, bugs: List<Bug>) {
+        if (bugs.isEmpty()) {
+            getTodayBugsWeb(opSys, orderBy, data)
+        } else {
+            sortBugs(orderBy, bugs as ArrayList<Bug>)
+            status.postValue(Status.DATA(bugs))
+        }
+    }
 
-            SortBy.STATUS ->{
-                bugs.sortBy{bug->bug.status}
+
+    private fun sortBugs(orderBy: SortBy, bugs: ArrayList<Bug>) {
+        when (orderBy) {
+            SortBy.PRODUCT -> {
+                bugs.sortBy { bug -> bug.product }
             }
 
-            SortBy.TIME ->{
+            SortBy.STATUS -> {
+                bugs.sortBy { bug -> bug.status }
+            }
+
+            SortBy.TIME -> {
 
             }
         }
     }
 
     fun getFilterParam() {
-       filterParam.postValue(repository.getFilterOption())
+        filterParam.postValue(repository.getFilterOption())
     }
 }
 
