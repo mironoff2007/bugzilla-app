@@ -3,6 +3,7 @@ package com.mironov.bugzillaapp.ui
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mironov.bugzillaapp.data.BaseRepository
 import com.mironov.bugzillaapp.data.Repository
 import com.mironov.bugzillaapp.data.retrofit.ApiResponse
 import com.mironov.bugzillaapp.domain.*
@@ -17,7 +18,7 @@ import javax.inject.Inject
 class BugListFragmentViewModel @Inject constructor() : ViewModel() {
 
     @Inject
-    protected lateinit var repository: Repository
+    protected lateinit var repository: BaseRepository
 
     var status = MutableLiveData<Status>()
 

@@ -10,31 +10,31 @@ import java.util.*
 import javax.inject.Inject
 
 class Repository @Inject constructor(
-    protected val dataShared: DataShared, protected  val bugsDb: BugsDatabase):BugsWebRepository {
+    protected val dataShared: DataShared, protected  val bugsDb: BugsDatabase):BaseRepository {
 
     override fun getBugsFromNetworkByDate(date:String): Call<ApiResponse> {
         return NetworkService
             .getJSONApi().getBugsByDate(date)
     }
 
-    fun saveBugsToDb(bugs: ArrayList<Bug>)
+    override fun saveBugsToDb(bugs: ArrayList<Bug>)
     {
         bugsDb.bugsDao().insertAllBugs(bugs)
     }
 
-    fun getAllBugsFromDbByDate(date: String): Flow<List<Bug>> {
+    override fun getAllBugsFromDbByDate(date: String): Flow<List<Bug>> {
        return bugsDb.bugsDao().readAllBugsByDate("%$date%")
     }
 
-    fun getAllBugsFromDbByOsAndDate(opSys:String, date: String): Flow<List<Bug>> {
+    override fun getAllBugsFromDbByOsAndDate(opSys:String, date: String): Flow<List<Bug>> {
         return bugsDb.bugsDao().readBugsByOsAndDate("$opSys%", "%$date%")
     }
 
-    fun saveFilterOption(filter:String){
+    override fun saveFilterOption(filter:String){
         dataShared.saveOsFilter(filter)
     }
 
-    fun getFilterOption():String{
+    override fun getFilterOption():String{
        return dataShared.getOsFilter()
     }
 }
