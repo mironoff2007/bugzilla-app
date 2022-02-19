@@ -2,34 +2,35 @@ package com.mironov.bugzillaapp.domain
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 @Entity
-class Bug : Parcelable {
+class Bug(
     @SerializedName("id")
-    val id: String? = null
+    val id: String,
 
     @SerializedName("classification")
-    val classification: String? = null
+    val classification: String,
 
     @SerializedName("platform")
-    val platform: String? = null
+    val platform: String,
 
     @SerializedName("op_sys")
-    val opSys: String? = null
+    val opSys: String,
 
     @SerializedName("product")
-    val product: String? = null
+    val product: String,
 
     @SerializedName("summary")
-    val summary: String? = null
+    val summary: String,
 
     @SerializedName("creation_time")
-    val creationTime: String? = null
+    @PrimaryKey
+    val creationTime: String,
 
     @SerializedName("status")
-    val status: String? = null
-
-}
+    val status: String
+) : Parcelable {}

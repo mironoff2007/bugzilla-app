@@ -1,17 +1,20 @@
 package com.mironov.bugzillaapp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mironov.bugzillaapp.R
+import com.mironov.bugzillaapp.appComponent
 import com.mironov.bugzillaapp.databinding.FragmentBugsListBinding
+import com.mironov.bugzillaapp.domain.DateUtil
+import com.mironov.bugzillaapp.domain.SortBy
 import com.mironov.bugzillaapp.domain.Status
 import com.mironov.bugzillaapp.ui.DetailsFragment.Companion.KEY_BUG
 import com.mironov.bugzillaapp.ui.DetailsFragment.Companion.TAG_DETAILS_FRAGMENT
@@ -26,13 +29,16 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     private lateinit var viewModel: BugListFragmentViewModel
 
-    private var adapter: BugsAdapter?=null
+    private var adapter: BugsAdapter? = null
 
     private var daysBack = 0
     private var daysBackLast = 0
 
     private var loading = false
 
+    private var sortBy = SortBy.TIME
+
+    private var filterOs: String? = null
 
     private val listener = object : BugsAdapter.ItemClickListener<BugViewHolder> {
         override fun onClickListener(item: BugViewHolder) {
@@ -59,18 +65,20 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        viewModel = ViewModelProvider(this).get(BugListFragmentViewModel::class.java)
+        requireContext().appComponent.inject(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel =
+            requireContext().appComponent.factory.create(BugListFragmentViewModel::class.java)
+
 
         //setupScrollEndListener()
 
-        observe()
 
-        if(adapter!=null){
+        if (adapter != null) {
 
             val layoutManager = LinearLayoutManager(this.requireContext())
             binding.recyclerView.layoutManager = layoutManager
@@ -83,8 +91,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
             )
 
             adapter!!.notifyDataSetChanged()
-        }
-        else{
+        } else {
             adapter = BugsAdapter()
             adapter!!.listener = listener
 
@@ -97,19 +104,14 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                     DividerItemDecoration.VERTICAL
                 )
             )
-           viewModel.getTodayBugs()
+
+
         }
 
+        observe()
+        observeFilter()
+        viewModel.getFilterParam()
     }
-
-    /*private fun search() {
-        if(binding.searchField.text.isNotBlank()){
-            viewModel.getNews(0)
-        }
-        else{
-            viewModel.searchNews(binding.searchField.text.toString())
-        }
-    }*/
 
     private fun setupScrollEndListener() {
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -119,11 +121,12 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
 
                 }
-                daysBackLast=daysBack
+                daysBackLast = daysBack
             }
         })
     }
 
+    @SuppressLint("ResourceType")
     private fun observe() {
         viewModel.status.observe(viewLifecycleOwner) { status ->
             when (status) {
@@ -138,16 +141,42 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is Status.ERROR -> {
-                    daysBack=daysBackLast
+                    daysBack = daysBackLast
                     loading = false
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), status.message, Toast.LENGTH_LONG).show()
                 }
-                else -> {
+                is Status.ERROR -> {
+                    loading = false
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        status.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                is Status.EMPTY -> {
+                    loading = false
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        requireContext().resources.getString(R.string.no_bugs_today),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
     }
 
 
+    private fun observeFilter() {
+        viewModel.filterParam.observe(viewLifecycleOwner) { param ->
+            if (filterOs != param) {
+                adapter!!.bugs?.clear()
+                adapter!!.notifyDataSetChanged()
+                filterOs = param
+                viewModel.getBugs(filterOs!!, sortBy,DateUtil.getTodayDate())
+            }
+        }
+    }
 }
