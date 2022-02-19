@@ -60,25 +60,27 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             if (opSys.isBlank()) {
                 repository.getAllBugsFromDbByDate(date).collect { bugs ->
-                    postOrRequest(opSys, orderBy, date, bugs)
+                    if (bugs.isEmpty()) {
+                        getTodayBugsWeb(opSys, orderBy, date)
+                    }
+                    else{
+                        sortBugs(orderBy, bugs as ArrayList<Bug>)
+                        status.postValue(Status.DATA(bugs))
+                    }
                 }
             } else {
                 repository.getAllBugsFromDbByOsAndDate(opSys,date).collect { bugs ->
-                    postOrRequest(opSys, orderBy, date, bugs)
+                    if (bugs.isEmpty()) {
+                        status.postValue(Status.EMPTY)
+                    }
+                    else{
+                        sortBugs(orderBy, bugs as ArrayList<Bug>)
+                        status.postValue(Status.DATA(bugs))
+                    }
                 }
             }
         }
     }
-
-    private fun postOrRequest(opSys: String, orderBy: SortBy, data: String, bugs: List<Bug>) {
-        if (bugs.isEmpty()) {
-            getTodayBugsWeb(opSys, orderBy, data)
-        } else {
-            sortBugs(orderBy, bugs as ArrayList<Bug>)
-            status.postValue(Status.DATA(bugs))
-        }
-    }
-
 
     private fun sortBugs(orderBy: SortBy, bugs: ArrayList<Bug>) {
         when (orderBy) {

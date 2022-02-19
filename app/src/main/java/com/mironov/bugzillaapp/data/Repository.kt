@@ -27,7 +27,7 @@ class Repository @Inject constructor(
     }
 
     fun getAllBugsFromDbByOsAndDate(opSys:String, date: String): Flow<List<Bug>> {
-        return bugsDb.bugsDao().readBugsByOsAndDate(opSys, "%$date%")
+        return bugsDb.bugsDao().readBugsByOsAndDate("$opSys%", "%$date%")
     }
 
     fun saveFilterOption(filter:String){
