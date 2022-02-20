@@ -13,6 +13,7 @@
     <string name="no_new_bugs">Нет багов</string>
     <string name="new_bugs">Есть новые баги</string>
     <string name="bug_service_name">Проверяем наличие новых багов</string>
+    <string name="close">закрыть</string>
 
     <string-array name="osFilter">
         <item>All</item>

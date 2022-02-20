@@ -21,7 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".ui.CheckNewBugsService" />
+        <service
+            android:name=".ui.CheckNewBugsService"
+            android:exported="false" />
     </application>
 
 </manifest>
