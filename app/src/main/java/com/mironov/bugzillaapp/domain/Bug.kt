@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
 @Entity
 class Bug(
     @SerializedName("id")
-    val id: String,
+    val id: Int,
 
     @SerializedName("classification")
     val classification: String,

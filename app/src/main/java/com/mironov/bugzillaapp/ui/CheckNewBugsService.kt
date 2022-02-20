@@ -5,11 +5,13 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.mironov.bugzillaapp.appComponent
+import com.mironov.bugzillaapp.data.BaseRepository
 import com.mironov.bugzillaapp.data.Repository
 import com.mironov.bugzillaapp.data.retrofit.ApiResponse
 import com.mironov.bugzillaapp.domain.DateUtil
@@ -24,33 +26,50 @@ import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
 
+
 class CheckNewBugsService : Service() {
 
+    private lateinit var channelId: String
+
     @Inject
-    protected lateinit var repository: Repository
+    lateinit var repository: BaseRepository
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Default + serviceJob)
 
     private val bugsCount = AtomicInteger(0)
-    
-    private var serviceId=0
+
+    private var serviceId = 1
+
+    // Binder given to clients
+    private val mBinder: IBinder = LocalBinder()
 
     override fun onCreate() {
         super.onCreate()
         applicationContext.appComponent.inject(this)
+
+        channelId =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                createNotificationChannel(BUGS_SERVICE_CHANNEL_ID, BUGS_SERVICE_CHANNEL_NAME)
+            } else {
+                // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
+                ""
+            }
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         id++
-        serviceId=id
+        serviceId = id
 
-        val notification=buildNotification(CONTENT_NO_BUGS)
+        val notification =
+            buildNotification(applicationContext.getString(com.mironov.bugzillaapp.R.string.no_new_bugs))
         startForeground(serviceId, notification)
 
         serviceScope.launch(Dispatchers.Default) {
-            fixedRateTimer(TIMER_NAME, false, 0L, TIMER_PERIOD)
+            fixedRateTimer(TIMER_NAME, false, INITIAL_DELAY, TIMER_PERIOD)
             {
+
+                updateNotification()
                 repository.getBugsFromNetworkByDate(DateUtil.getTodayDate()).enqueue(object :
                     Callback<ApiResponse?> {
                     override fun onResponse(
@@ -59,10 +78,10 @@ class CheckNewBugsService : Service() {
                     ) {
                         if (response.body() != null) {
                             if (response.body()!!.bugs!!.size > bugsCount.get()) {
-                                updateNotification(notification)
+                                updateNotification()
                                 bugsCount.set(response.body()!!.bugs!!.size)
                                 serviceScope.launch(Dispatchers.IO) {
-                                repository.saveBugsToDb(response.body()!!.bugs!!)
+                                    repository.saveBugsToDb(response.body()!!.bugs!!)
                                 }
                             }
                         }
@@ -75,23 +94,17 @@ class CheckNewBugsService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun buildNotification(contextText:String): Notification {
-        val channelId =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                createNotificationChannel(BUGS_SERVICE_CHANNEL_ID, BUGS_SERVICE_CHANNEL_NAME)
-            } else {
-                // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
-                ""
-            }
+    private fun buildNotification(contextText: String): Notification {
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle(SERVICE_TITLE)
+            .setContentTitle(applicationContext.getString(com.mironov.bugzillaapp.R.string.bug_service_name))
             .setContentText(contextText)
             .setSmallIcon(R.drawable.ic_popup_sync)
             .build()
     }
 
-    private fun updateNotification(notification:Notification) {
-        buildNotification(CONTENT_NEW_BUGS)
+    private fun updateNotification() {
+        val notification =
+            buildNotification(applicationContext.getString(com.mironov.bugzillaapp.R.string.new_bugs))
         val mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.notify(serviceId, notification)
     }
@@ -109,23 +122,28 @@ class CheckNewBugsService : Service() {
         return channelId
     }
 
+    fun stopService() {
+        stopSelf()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         serviceJob.cancel()
     }
 
+    override fun onBind(intent: Intent): IBinder? {
+        return mBinder
+    }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
+    inner class LocalBinder : Binder() {
+        val service: CheckNewBugsService
+            get() = this@CheckNewBugsService
     }
 
     companion object {
-        var id=0
+        var id = 0
         const val TIMER_PERIOD = 1000L
-        const val SERVICE_TITLE = "Bugs service"
-        const val CONTENT_NO_BUGS = "No new bags"
-        const val CONTENT_NEW_BUGS = "New bags"
-        const val BUGS_SERVICE_EXTRA = "BUGS_SERVICE_EXTRA"
+        const val INITIAL_DELAY = 1000L
         const val TIMER_NAME = "TIMER_NAME"
         const val BUGS_SERVICE_CHANNEL_ID = "BUGS_SERVICE_CHANNEL_ID"
         const val BUGS_SERVICE_CHANNEL_NAME = "BUGS_SERVICE_CHANNEL_NAME"

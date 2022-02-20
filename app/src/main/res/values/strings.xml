@@ -10,6 +10,9 @@
     <string name="no_bugs_today">сегодня нет багов</string>
     <string name="time">time-</string>
     <string name="set_filter">задать фильтр</string>
+    <string name="no_new_bugs">Нет багов</string>
+    <string name="new_bugs">Есть новые баги</string>
+    <string name="bug_service_name">Проверяем наличие новых багов</string>
 
     <string-array name="osFilter">
         <item>All</item>
