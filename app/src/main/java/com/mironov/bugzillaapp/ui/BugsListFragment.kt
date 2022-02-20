@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.mironov.bugzillaapp.R
 import com.mironov.bugzillaapp.appComponent
 import com.mironov.bugzillaapp.databinding.FragmentBugsListBinding
@@ -36,7 +35,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     private var loading = false
 
-    private var sortBy = SortBy.TIME
+    private lateinit var sortBy : SortBy
 
     private var filterOs: String? = null
 
@@ -156,13 +155,12 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
 
     private fun observeFilter() {
-        viewModel.filterParam.observe(viewLifecycleOwner) { param ->
-            if (filterOs != param) {
+        viewModel.filterSortParam.observe(viewLifecycleOwner) { param ->
                 adapter!!.bugs?.clear()
                 adapter!!.notifyDataSetChanged()
-                filterOs = param
+                filterOs = param.filter
+                sortBy=param.sortBy
                 viewModel.getBugs(filterOs!!, sortBy,DateUtil.getTodayDate())
-            }
         }
     }
 

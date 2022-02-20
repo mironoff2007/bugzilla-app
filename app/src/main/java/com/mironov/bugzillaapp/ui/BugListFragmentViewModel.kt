@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mironov.bugzillaapp.data.BaseRepository
-import com.mironov.bugzillaapp.data.Repository
 import com.mironov.bugzillaapp.data.retrofit.ApiResponse
 import com.mironov.bugzillaapp.domain.*
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +21,7 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
 
     var status = MutableLiveData<Status>()
 
-    var filterParam = MutableLiveData<String>()
+    var filterSortParam = MutableLiveData<FilterSortParams>()
 
     var isNewBugs = MutableLiveData<Boolean>()
 
@@ -99,7 +98,9 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
     }
 
     fun getFilterParam() {
-        filterParam.postValue(repository.getFilterOption())
+        val filterOption=repository.getFilterOption()
+        val sortOption=repository.getSortOption()
+        filterSortParam.postValue(FilterSortParams(sortOption,filterOption))
     }
 
     fun checkNewBugs(numberBugs: Int) {
@@ -111,6 +112,8 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
             }
         }
     }
+
+
 
 }
 
