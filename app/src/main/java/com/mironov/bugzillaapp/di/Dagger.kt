@@ -7,6 +7,9 @@ import com.mironov.bugzillaapp.data.DataShared
 import com.mironov.bugzillaapp.data.Repository
 import com.mironov.bugzillaapp.data.room.BugsDatabase
 import com.mironov.bugzillaapp.ui.*
+import com.mironov.bugzillaapp.ui.screens.BugsListFragment
+import com.mironov.bugzillaapp.ui.screens.PrefsFragment
+import com.mironov.bugzillaapp.ui.viewmodel.BugListFragmentViewModel
 import com.mironov.newsapp.di.*
 import dagger.*
 import dagger.multibindings.IntoMap

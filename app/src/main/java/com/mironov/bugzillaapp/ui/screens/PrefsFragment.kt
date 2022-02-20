@@ -1,4 +1,4 @@
-package com.mironov.bugzillaapp.ui
+package com.mironov.bugzillaapp.ui.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,14 +6,13 @@ import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import com.google.gson.Gson
 import com.mironov.bugzillaapp.R
 import com.mironov.bugzillaapp.appComponent
 import com.mironov.bugzillaapp.data.Repository
 import com.mironov.bugzillaapp.databinding.FragmentPrefsBinding
 import com.mironov.bugzillaapp.domain.SortBy
+import com.mironov.bugzillaapp.ui.BaseFragment
 import javax.inject.Inject
-
 
 class PrefsFragment : BaseFragment<FragmentPrefsBinding>() {
 
@@ -56,9 +55,11 @@ class PrefsFragment : BaseFragment<FragmentPrefsBinding>() {
 
         binding.osSpinner.adapter = osAdapter
 
-        var oSid=osArray.indexOf(filterOption)
+        var oSid = osArray.indexOf(filterOption)
 
-        if(oSid<0){oSid=0}
+        if (oSid < 0) {
+            oSid = 0
+        }
 
         binding.osSpinner.setSelection(oSid)
 
@@ -103,20 +104,20 @@ class PrefsFragment : BaseFragment<FragmentPrefsBinding>() {
                 i: Int,
                 l: Long
             ) {
-               when (i) {
-                    0 ->  sortBy = SortBy.STATUS
+                when (i) {
+                    0 -> sortBy = SortBy.STATUS
                     1 -> sortBy = SortBy.PRODUCT
                     2 -> sortBy = SortBy.TIME
-                   else -> sortBy = SortBy.TIME
-               }
-                saveSortOption(sortBy!!)
+                    else -> sortBy = SortBy.TIME
+                }
+                saveSortOption(sortBy)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
     }
 
-    //в идеале нужно это делать асинхронно и через вьюмодель
+
     fun saveFilterOption(filter: String) {
         repository.saveFilterOption(filter)
     }

@@ -7,8 +7,10 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.mironov.bugzillaapp.R
 import com.mironov.bugzillaapp.appComponent
-import com.mironov.bugzillaapp.ui.BugsListFragment.Companion.TAG_BUGS_LIST_FRAGMENT
-import com.mironov.bugzillaapp.ui.PrefsFragment.Companion.TAG_PREFS_FRAGMENT
+import com.mironov.bugzillaapp.ui.screens.BugsListFragment.Companion.TAG_BUGS_LIST_FRAGMENT
+import com.mironov.bugzillaapp.ui.screens.PrefsFragment.Companion.TAG_PREFS_FRAGMENT
+import com.mironov.bugzillaapp.ui.screens.BugsListFragment
+import com.mironov.bugzillaapp.ui.screens.PrefsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,7 +22,6 @@ class MainActivity : AppCompatActivity() {
 
         appComponent.inject(this)
 
-        // Запускаем свой ForegroundService
         val checkNewBugsService = Intent(this, CheckNewBugsService::class.java)
 
         startService(checkNewBugsService)
@@ -35,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //Menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
@@ -52,14 +52,6 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }
 

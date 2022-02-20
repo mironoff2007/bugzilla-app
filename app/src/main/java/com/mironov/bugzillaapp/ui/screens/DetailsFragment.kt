@@ -1,4 +1,4 @@
-package com.mironov.bugzillaapp.ui
+package com.mironov.bugzillaapp.ui.screens
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.mironov.bugzillaapp.R
 import com.mironov.bugzillaapp.databinding.FragmentDetailsBinding
 import com.mironov.bugzillaapp.domain.Bug
+import com.mironov.bugzillaapp.ui.BaseFragment
 
 class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
 

@@ -1,4 +1,4 @@
-package com.mironov.bugzillaapp.ui
+package com.mironov.bugzillaapp.ui.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,10 +15,12 @@ import com.mironov.bugzillaapp.databinding.FragmentBugsListBinding
 import com.mironov.bugzillaapp.domain.DateUtil
 import com.mironov.bugzillaapp.domain.SortBy
 import com.mironov.bugzillaapp.domain.Status
-import com.mironov.bugzillaapp.ui.DetailsFragment.Companion.KEY_BUG
-import com.mironov.bugzillaapp.ui.DetailsFragment.Companion.TAG_DETAILS_FRAGMENT
+import com.mironov.bugzillaapp.ui.BaseFragment
+import com.mironov.bugzillaapp.ui.screens.DetailsFragment.Companion.KEY_BUG
+import com.mironov.bugzillaapp.ui.screens.DetailsFragment.Companion.TAG_DETAILS_FRAGMENT
 import com.mironov.bugzillaapp.ui.recycler.BugViewHolder
 import com.mironov.bugzillaapp.ui.recycler.BugsAdapter
+import com.mironov.bugzillaapp.ui.viewmodel.BugListFragmentViewModel
 
 class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
@@ -67,6 +69,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
         requireContext().appComponent.inject(this)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -110,7 +113,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
         viewModel.getFilterParam()
     }
 
-    @SuppressLint("ResourceType")
+    @SuppressLint("ResourceType", "NotifyDataSetChanged")
     private fun observe() {
         viewModel.status.observe(viewLifecycleOwner) { status ->
             when (status) {
@@ -170,14 +173,6 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                 viewModel.getBugs(filterOs!!, sortBy,DateUtil.getTodayDate())
             }
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     override fun onStart() {

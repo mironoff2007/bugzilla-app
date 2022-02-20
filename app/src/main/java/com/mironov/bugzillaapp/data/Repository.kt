@@ -1,6 +1,5 @@
 package com.mironov.bugzillaapp.data
 
-import com.google.gson.Gson
 import com.mironov.bugzillaapp.data.retrofit.ApiResponse
 import com.mironov.bugzillaapp.data.retrofit.NetworkService
 import com.mironov.bugzillaapp.data.room.BugsDatabase
@@ -42,33 +41,19 @@ class Repository @Inject constructor(
 
     override fun saveSortOption(sortOption: SortBy) {
         val sortId = when (sortOption) {
-            SortBy.STATUS -> {
-                0
-            }
-            SortBy.PRODUCT -> {
-                1
-            }
-            SortBy.TIME -> {
-                2
-            }
+            SortBy.STATUS -> 0
+            SortBy.PRODUCT -> 1
+            SortBy.TIME -> 2
         }
         dataShared.saveSortOption(sortId)
     }
 
     override fun getSortOption(): SortBy {
         return when (dataShared.getSortOption()) {
-            0 -> {
-                SortBy.STATUS
-            }
-            1 -> {
-                SortBy.PRODUCT
-            }
-            2 -> {
-                SortBy.TIME
-            }
-            else -> {
-                SortBy.TIME
-            }
+            0 -> SortBy.STATUS
+            1 -> SortBy.PRODUCT
+            2 -> SortBy.TIME
+            else -> SortBy.TIME
         }
     }
 }

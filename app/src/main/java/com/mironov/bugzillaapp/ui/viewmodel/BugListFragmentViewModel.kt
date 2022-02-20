@@ -1,4 +1,4 @@
-package com.mironov.bugzillaapp.ui
+package com.mironov.bugzillaapp.ui.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,7 +28,7 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
     private fun getTodayBugsWeb(filterOs: String, orderBy: SortBy, date: String) {
         status.postValue(Status.LOADING)
         repository.getBugsFromNetworkByDate(date)
-            ?.enqueue(object : Callback<ApiResponse?> {
+            .enqueue(object : Callback<ApiResponse?> {
                 override fun onResponse(
                     call: Call<ApiResponse?>,
                     response: Response<ApiResponse?>
@@ -98,21 +98,20 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
     }
 
     fun getFilterParam() {
-        val filterOption=repository.getFilterOption()
-        val sortOption=repository.getSortOption()
-        filterSortParam.postValue(FilterSortParams(sortOption,filterOption))
+        val filterOption = repository.getFilterOption()
+        val sortOption = repository.getSortOption()
+        filterSortParam.postValue(FilterSortParams(sortOption, filterOption))
     }
 
     fun checkNewBugs(numberBugs: Int) {
         viewModelScope.launch(Dispatchers.Main) {
             repository.getAllBugsFromDbByDate(DateUtil.getTodayDate()).collect { bugs ->
-                if (bugs.size>numberBugs){
+                if (bugs.size > numberBugs) {
                     isNewBugs.postValue(true)
                 }
             }
         }
     }
-
 
 
 }

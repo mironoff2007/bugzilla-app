@@ -1,5 +1,6 @@
 package com.mironov.bugzillaapp.ui
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.app.PendingIntent.getService
 import android.content.Context
@@ -8,7 +9,6 @@ import android.graphics.Color
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.mironov.bugzillaapp.R
@@ -24,10 +24,8 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
-
 
 class CheckNewBugsService : Service() {
 
@@ -39,11 +37,8 @@ class CheckNewBugsService : Service() {
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Default + serviceJob)
 
-    private val bugsCount = AtomicInteger(0)
-
     private var serviceId = 1
 
-    // Binder given to clients
     private val mBinder: IBinder = LocalBinder()
 
     override fun onCreate() {
@@ -70,7 +65,7 @@ class CheckNewBugsService : Service() {
         }
 
         val notification =
-            buildNotification(applicationContext.getString(com.mironov.bugzillaapp.R.string.no_new_bugs))
+            buildNotification(applicationContext.getString(R.string.no_new_bugs))
         startForeground(serviceId, notification)
 
         serviceScope.launch(Dispatchers.Default) {
@@ -104,6 +99,7 @@ class CheckNewBugsService : Service() {
         return START_NOT_STICKY
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun buildNotification(contextText: String): Notification {
         val stopSelf = Intent(ACTION_STOP_SERVICE)
         stopSelf.setClass(this@CheckNewBugsService, CheckNewBugsService::class.java)
@@ -153,7 +149,7 @@ class CheckNewBugsService : Service() {
         serviceJob.cancel()
     }
 
-    override fun onBind(intent: Intent): IBinder? {
+    override fun onBind(intent: Intent): IBinder {
         return mBinder
     }
 
@@ -164,7 +160,7 @@ class CheckNewBugsService : Service() {
 
     companion object {
         var id = 0
-        const val TIMER_PERIOD = 1000L*60*10
+        const val TIMER_PERIOD = 1000L * 60 * 10
         const val INITIAL_DELAY = 1000L
         const val TIMER_NAME = "TIMER_NAME"
         const val ACTION_STOP_SERVICE = "STOP"
