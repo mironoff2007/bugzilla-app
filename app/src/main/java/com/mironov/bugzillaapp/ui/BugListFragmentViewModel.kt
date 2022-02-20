@@ -24,6 +24,8 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
 
     var filterParam = MutableLiveData<String>()
 
+    var isNewBugs = MutableLiveData<Boolean>()
+
     private fun getTodayBugsWeb(filterOs: String, orderBy: SortBy, date: String) {
         status.postValue(Status.LOADING)
         repository.getBugsFromNetworkByDate(date)
@@ -41,8 +43,7 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
                                 repository.saveBugsToDb(bugs!!)
                                 getBugs(filterOs, orderBy, date)
                             }
-                        }
-                        else {
+                        } else {
                             status.postValue(Status.EMPTY)
                         }
                     } else {
@@ -63,18 +64,16 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
                 repository.getAllBugsFromDbByDate(date).collect { bugs ->
                     if (bugs.isEmpty()) {
                         getTodayBugsWeb(opSys, orderBy, date)
-                    }
-                    else{
+                    } else {
                         sortBugs(orderBy, bugs as ArrayList<Bug>)
                         status.postValue(Status.DATA(bugs))
                     }
                 }
             } else {
-                repository.getAllBugsFromDbByOsAndDate(opSys,date).collect { bugs ->
+                repository.getAllBugsFromDbByOsAndDate(opSys, date).collect { bugs ->
                     if (bugs.isEmpty()) {
                         status.postValue(Status.EMPTY)
-                    }
-                    else{
+                    } else {
                         sortBugs(orderBy, bugs as ArrayList<Bug>)
                         status.postValue(Status.DATA(bugs))
                     }
@@ -102,5 +101,16 @@ class BugListFragmentViewModel @Inject constructor() : ViewModel() {
     fun getFilterParam() {
         filterParam.postValue(repository.getFilterOption())
     }
+
+    fun checkNewBugs(numberBugs: Int) {
+        viewModelScope.launch(Dispatchers.Main) {
+            repository.getAllBugsFromDbByDate(DateUtil.getTodayDate()).collect { bugs ->
+                if (bugs.size>numberBugs){
+                    isNewBugs.postValue(true)
+                }
+            }
+        }
+    }
+
 }
 
