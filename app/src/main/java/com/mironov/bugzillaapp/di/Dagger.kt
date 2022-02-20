@@ -2,13 +2,11 @@ package com.mironov.bugzillaapp.di
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.mironov.bugzillaapp.data.BaseRepository
 import com.mironov.bugzillaapp.data.DataShared
 import com.mironov.bugzillaapp.data.Repository
 import com.mironov.bugzillaapp.data.room.BugsDatabase
-import com.mironov.bugzillaapp.ui.BugListFragmentViewModel
-import com.mironov.bugzillaapp.ui.BugsListFragment
-import com.mironov.bugzillaapp.ui.MainActivity
-import com.mironov.bugzillaapp.ui.PrefsFragment
+import com.mironov.bugzillaapp.ui.*
 import com.mironov.newsapp.di.*
 import dagger.*
 import dagger.multibindings.IntoMap
@@ -22,7 +20,7 @@ interface AppComponent  {
     fun inject(activity: MainActivity)
     fun inject(bugsListFragment: BugsListFragment)
     fun inject(prefsFragment: PrefsFragment)
-
+    fun inject(checkNewBugsService: CheckNewBugsService)
 
     val factory: MultiViewModelFactory
 
@@ -40,7 +38,7 @@ interface AppComponent  {
 class AppModule() {
 
     @Provides
-    fun provideRepository(dataShared: DataShared, bugsDB: BugsDatabase): Repository {
+    fun provideRepository(dataShared: DataShared, bugsDB: BugsDatabase): BaseRepository {
         return Repository(dataShared,  bugsDB)
     }
 

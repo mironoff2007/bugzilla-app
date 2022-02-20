@@ -6,5 +6,5 @@ import java.util.*
 
 class ApiResponse {
     @SerializedName("bugs")
-    val bugs : ArrayList<Bug>? = null
+    var bugs : ArrayList<Bug>? = null
 }

@@ -1,5 +1,6 @@
 package com.mironov.bugzillaapp.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -18,6 +19,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         appComponent.inject(this)
+
+        // Запускаем свой ForegroundService
+        val checkNewBugsService = Intent(this, CheckNewBugsService::class.java)
+
+        startService(checkNewBugsService)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -38,14 +44,22 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_set_filter -> {
-              supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, PrefsFragment(),TAG_PREFS_FRAGMENT)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, PrefsFragment(), TAG_PREFS_FRAGMENT)
                     .addToBackStack(TAG_BUGS_LIST_FRAGMENT)
                     .commit()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }
 

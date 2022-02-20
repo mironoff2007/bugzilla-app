@@ -74,10 +74,6 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
         viewModel =
             requireContext().appComponent.factory.create(BugListFragmentViewModel::class.java)
 
-
-        //setupScrollEndListener()
-
-
         if (adapter != null) {
 
             val layoutManager = LinearLayoutManager(this.requireContext())
@@ -110,20 +106,9 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
         observe()
         observeFilter()
+        observeNewBugs()
+
         viewModel.getFilterParam()
-    }
-
-    private fun setupScrollEndListener() {
-        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(1) && !loading) {
-
-
-                }
-                daysBackLast = daysBack
-            }
-        })
     }
 
     @SuppressLint("ResourceType")
@@ -178,5 +163,26 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                 viewModel.getBugs(filterOs!!, sortBy,DateUtil.getTodayDate())
             }
         }
+    }
+
+    private fun observeNewBugs() {
+        viewModel.isNewBugs.observe(viewLifecycleOwner) { param ->
+            if(param){
+                viewModel.getBugs(filterOs!!, sortBy,DateUtil.getTodayDate())
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.checkNewBugs(adapter?.bugs!!.size)
     }
 }
