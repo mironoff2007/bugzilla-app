@@ -19,6 +19,7 @@ import com.mironov.bugzillaapp.domain.DateUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -64,8 +65,6 @@ class CheckNewBugsService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
-        Log.d("My_tag", intent.action.toString())
-
         if (ACTION_STOP_SERVICE == intent.action) {
             stopService()
         }
@@ -84,12 +83,16 @@ class CheckNewBugsService : Service() {
                         response: Response<ApiResponse?>
                     ) {
                         if (response.body() != null) {
-                            if (response.body()!!.bugs!!.size > bugsCount.get()) {
-                                updateNotification()
-                                bugsCount.set(response.body()!!.bugs!!.size)
-                                serviceScope.launch(Dispatchers.IO) {
-                                    repository.saveBugsToDb(response.body()!!.bugs!!)
-                                }
+                            serviceScope.launch(Dispatchers.IO) {
+                                repository.getAllBugsFromDbByDate(DateUtil.getTodayDate())
+                                    .collect { bugs ->
+                                        if (bugs.isNotEmpty()) {
+                                            if (bugs.size < response.body()!!.bugs!!.size) {
+                                                updateNotification()
+                                                repository.saveBugsToDb(response.body()!!.bugs!!)
+                                            }
+                                        }
+                                    }
                             }
                         }
                     }
@@ -112,7 +115,8 @@ class CheckNewBugsService : Service() {
             .setContentTitle(applicationContext.getString(R.string.bug_service_name))
             .setContentText(contextText)
             .setSmallIcon(R.drawable.ic_bug)
-            .addAction(android.R.drawable.ic_menu_close_clear_cancel,
+            .addAction(
+                android.R.drawable.ic_menu_close_clear_cancel,
                 applicationContext.getString(R.string.close),
                 pStopSelf
             )
@@ -160,7 +164,7 @@ class CheckNewBugsService : Service() {
 
     companion object {
         var id = 0
-        const val TIMER_PERIOD = 1000L
+        const val TIMER_PERIOD = 1000L*60*10
         const val INITIAL_DELAY = 1000L
         const val TIMER_NAME = "TIMER_NAME"
         const val ACTION_STOP_SERVICE = "STOP"
