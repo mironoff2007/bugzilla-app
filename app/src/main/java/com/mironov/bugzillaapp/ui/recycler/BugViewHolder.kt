@@ -10,11 +10,14 @@ class BugViewHolder(
     private val binding: ItemBugBinding,
 ) : RecyclerView.ViewHolder(binding.root){
     @SuppressLint("SetTextI18n")
-    fun bind(bug: Bug,
-             listener: BugsAdapter.ItemClickListener<BugViewHolder>
+    fun bind(
+        bug: Bug,
+        listener: BugsAdapter.ItemClickListener<BugViewHolder>,
+        position: Int
     ){
         with(binding) {
             val  context=root.context
+            index.text= (position+1).toString()
             product.text=context.resources.getString(R.string.product)+bug!!.product
             os.text=context.resources.getString(R.string.os)+bug.opSys
             classification.text=context.resources.getString(R.string.classification)+bug.classification

@@ -25,7 +25,7 @@ class BugsAdapter() : RecyclerView.Adapter<BugViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: BugViewHolder, position: Int) {
-        holder.bind(bugs[position],listener)
+        holder.bind(bugs[position],listener,position)
     }
 
     override fun getItemCount(): Int {

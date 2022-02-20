@@ -4,6 +4,14 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:id="@+id/index"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="@dimen/viewHolder_text_size" />
+
     <LinearLayout
         android:layout_marginLeft="10dp"
         android:layout_width="wrap_content"
