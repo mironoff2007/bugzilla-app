@@ -118,6 +118,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
                 is Status.DATA -> {
                     loading = false
                     binding.progressBar.visibility = View.GONE
+                    adapter!!.bugs.clear()
                     adapter!!.bugs.addAll(status.articles!!)
                     adapter!!.notifyDataSetChanged()
                 }
