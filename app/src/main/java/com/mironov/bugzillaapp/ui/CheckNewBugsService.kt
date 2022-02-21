@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Binder
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -41,6 +42,9 @@ class CheckNewBugsService : Service() {
 
     private val mBinder: IBinder = LocalBinder()
 
+    private var timerPeriod = TIMER_PERIOD
+    private var initialDelay = INITIAL_DELAY
+
     override fun onCreate() {
         super.onCreate()
         applicationContext.appComponent.inject(this)
@@ -61,7 +65,13 @@ class CheckNewBugsService : Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
         if (ACTION_STOP_SERVICE == intent.action) {
+            serviceJob.complete()
             stopService()
+        }
+        if (intent.extras?.get(EXTRAS_KEY) != null) {
+            val extra = intent.extras?.get(EXTRAS_KEY) as Bundle
+            initialDelay = extra.getLong(INITIAL_DELAY_KEY, INITIAL_DELAY)
+            timerPeriod = extra.getLong(TIMER_PERIOD_KEY, TIMER_PERIOD)
         }
 
         val notification =
@@ -69,7 +79,7 @@ class CheckNewBugsService : Service() {
         startForeground(serviceId, notification)
 
         serviceScope.launch(Dispatchers.Default) {
-            fixedRateTimer(TIMER_NAME, false, INITIAL_DELAY, TIMER_PERIOD)
+            fixedRateTimer(TIMER_NAME, false, initialDelay, timerPeriod)
             {
                 repository.getBugsFromNetworkByDate(DateUtil.getTodayDate()).enqueue(object :
                     Callback<ApiResponse?> {
@@ -160,8 +170,11 @@ class CheckNewBugsService : Service() {
 
     companion object {
         var id = 0
+        const val EXTRAS_KEY = "EXTRAS_KEY "
         const val TIMER_PERIOD = 1000L * 60 * 10
         const val INITIAL_DELAY = 1000L
+        const val TIMER_PERIOD_KEY = "TIMER_PERIOD_KEY"
+        const val INITIAL_DELAY_KEY = "INITIAL_DELAY_KEY"
         const val TIMER_NAME = "TIMER_NAME"
         const val ACTION_STOP_SERVICE = "STOP"
         const val BUGS_SERVICE_CHANNEL_ID = "BUGS_SERVICE_CHANNEL_ID"

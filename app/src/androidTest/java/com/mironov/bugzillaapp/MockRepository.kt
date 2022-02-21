@@ -4,7 +4,9 @@ import com.mironov.bugzillaapp.data.BaseRepository
 import com.mironov.bugzillaapp.data.BugsWebRepository
 import com.mironov.bugzillaapp.data.retrofit.ApiResponse
 import com.mironov.bugzillaapp.domain.Bug
+import com.mironov.bugzillaapp.domain.SortBy
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -17,7 +19,7 @@ import java.util.ArrayList
 class MockRepository : BaseRepository {
 
     companion object {
-        var bugsCount = 0
+        var bugsCount = 1
     }
 
     class MockCall : Call<ApiResponse> {
@@ -28,7 +30,7 @@ class MockRepository : BaseRepository {
         override fun execute(): Response<ApiResponse> {
             val response = ApiResponse()
             val bugs = ArrayList<Bug>()
-            for (i in 0..bugsCount) {
+            for (i in 1..bugsCount) {
                 bugs.add(
                     Bug(
                         i,
@@ -43,9 +45,9 @@ class MockRepository : BaseRepository {
                 )
             }
 
-            response.bugs=bugs
+            response.bugs = bugs
 
-            //bugsCount++
+            bugsCount++
 
             return Response.success(
                 response
@@ -90,8 +92,29 @@ class MockRepository : BaseRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getAllBugsFromDbByDate(date: String): Flow<List<Bug>> {
+    override fun saveSortOption(sortOption: SortBy) {
         TODO("Not yet implemented")
+    }
+
+    override fun getSortOption(): SortBy {
+        TODO("Not yet implemented")
+    }
+
+    override fun getAllBugsFromDbByDate(date: String): Flow<List<Bug>> {
+        return flowOf(
+            listOf(
+                Bug(
+                    1,
+                    "class",
+                    "platf",
+                    "opSys",
+                    "prod",
+                    "summary",
+                    "time",
+                    "status"
+                )
+            )
+        )
     }
 
     override fun getAllBugsFromDbByOsAndDate(opSys: String, date: String): Flow<List<Bug>> {

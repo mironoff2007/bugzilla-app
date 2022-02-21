@@ -1,24 +1,24 @@
 package com.mironov.bugzillaapp
 
 import android.content.Intent
+import android.os.Bundle
 import android.os.IBinder
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ServiceTestRule
-import com.mironov.bugzillaapp.data.BaseRepository
-
 import com.mironov.bugzillaapp.di.DaggerTestAppComponent
 import com.mironov.bugzillaapp.di.TestAppComponent
 import com.mironov.bugzillaapp.ui.CheckNewBugsService
-import okhttp3.internal.wait
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.Assert.*
+import com.mironov.bugzillaapp.ui.CheckNewBugsService.Companion.EXTRAS_KEY
+import com.mironov.bugzillaapp.ui.CheckNewBugsService.Companion.INITIAL_DELAY_KEY
+import com.mironov.bugzillaapp.ui.CheckNewBugsService.Companion.TIMER_PERIOD_KEY
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
 import java.lang.Thread.sleep
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 
 /**
@@ -50,24 +50,23 @@ import javax.inject.Inject
 
     @Test
     fun testBugService() {
-        // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-        // Запускаем свой ForegroundService
         val checkNewBugsService = Intent(appContext, CheckNewBugsService::class.java)
+        val extras = Bundle()
+        extras.putLong(TIMER_PERIOD_KEY,1000)
+        extras.putLong(INITIAL_DELAY_KEY,1000)
+        checkNewBugsService.putExtra(EXTRAS_KEY,extras)
 
-        // Bind the service and grab a reference to the binder.
         val binder: IBinder = serviceRule.bindService(checkNewBugsService)
 
-        // Get the reference to the service, or you can call
-        // public methods on the binder directly.
         val service: CheckNewBugsService = (binder as CheckNewBugsService.LocalBinder).service
 
         service.repository=repository
 
         serviceRule.startService(checkNewBugsService)
 
-        sleep(100000)
+        sleep(1000*60*10)
 
         service.stopService()
 
