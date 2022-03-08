@@ -25,10 +25,13 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
 
 class CheckNewBugsService : Service() {
+
+    val newBugs= AtomicBoolean(false)
 
     private lateinit var channelId: String
 
@@ -95,6 +98,7 @@ class CheckNewBugsService : Service() {
                                             if (bugs.size < response.body()!!.bugs!!.size) {
                                                 updateNotification()
                                                 repository.saveBugsToDb(response.body()!!.bugs!!)
+                                                newBugs.set(true)
                                             }
                                         }
                                     }

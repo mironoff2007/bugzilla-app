@@ -50,12 +50,13 @@ import java.util.concurrent.TimeUnit
 
     @Test
     fun testBugService() {
+        var newBugs=false
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
         val checkNewBugsService = Intent(appContext, CheckNewBugsService::class.java)
         val extras = Bundle()
-        extras.putLong(TIMER_PERIOD_KEY,1000)
-        extras.putLong(INITIAL_DELAY_KEY,1000)
+        extras.putLong(TIMER_PERIOD_KEY,100)
+        extras.putLong(INITIAL_DELAY_KEY,100)
         checkNewBugsService.putExtra(EXTRAS_KEY,extras)
 
         val binder: IBinder = serviceRule.bindService(checkNewBugsService)
@@ -66,10 +67,12 @@ import java.util.concurrent.TimeUnit
 
         serviceRule.startService(checkNewBugsService)
 
-        sleep(1000*60*10)
+        sleep(1000)
+
+        newBugs=service.newBugs.get()
 
         service.stopService()
 
-        assertEquals("com.mironov.bugzillaapp", appContext.packageName)
+        assertEquals(newBugs,true)
     }
 }
