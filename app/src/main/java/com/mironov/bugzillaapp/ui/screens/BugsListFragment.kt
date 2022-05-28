@@ -1,8 +1,12 @@
 package com.mironov.bugzillaapp.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +20,7 @@ import com.mironov.bugzillaapp.domain.DateUtil
 import com.mironov.bugzillaapp.domain.SortBy
 import com.mironov.bugzillaapp.domain.Status
 import com.mironov.bugzillaapp.ui.BaseFragment
+import com.mironov.bugzillaapp.ui.CheckNewBugsService
 import com.mironov.bugzillaapp.ui.screens.DetailsFragment.Companion.KEY_BUG
 import com.mironov.bugzillaapp.ui.screens.DetailsFragment.Companion.TAG_DETAILS_FRAGMENT
 import com.mironov.bugzillaapp.ui.recycler.BugViewHolder
@@ -41,6 +46,8 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     private var filterOs: String? = null
 
+    private var bugsService: CheckNewBugsService? = null
+
     private val listener = object : BugsAdapter.ItemClickListener<BugViewHolder> {
         override fun onClickListener(item: BugViewHolder) {
 
@@ -63,6 +70,11 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
         container: ViewGroup?
     ): FragmentBugsListBinding =
         FragmentBugsListBinding.inflate(inflater, container, false)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        bindBugsService()
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -111,6 +123,37 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
         observeNewBugs()
 
         viewModel.getFilterParam()
+
+    }
+
+    private var bound: Boolean = false
+
+    private val serviceConnection = object: ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            bound = true
+            bugsService = if(service is CheckNewBugsService.LocalBinder) service.instance else null
+            subscribeToNewBugs()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            bound = false
+        }
+    }
+
+    fun subscribeToNewBugs(){
+        bugsService?.newBugsObserver?.observe(this) { newBugs ->
+            when (newBugs) {
+                true -> {
+                    Toast.makeText(requireContext(), "Новые баги", Toast.LENGTH_LONG).show()
+                }
+                false -> { }
+            }
+        }
+    }
+
+    private fun bindBugsService(){
+        val intent = Intent(requireContext(), CheckNewBugsService::class.java)
+        requireActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     @SuppressLint("ResourceType", "NotifyDataSetChanged")
@@ -178,5 +221,10 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
     override fun onStart() {
         super.onStart()
         viewModel.checkNewBugs(adapter?.bugs!!.size)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (bound) bugsService?.unbindService(serviceConnection)
     }
 }

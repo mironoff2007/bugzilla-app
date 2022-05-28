@@ -12,9 +12,11 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.MutableLiveData
 import com.mironov.bugzillaapp.R
 import com.mironov.bugzillaapp.appComponent
 import com.mironov.bugzillaapp.data.BaseRepository
+import com.mironov.bugzillaapp.data.MockRepository
 import com.mironov.bugzillaapp.data.retrofit.ApiResponse
 import com.mironov.bugzillaapp.domain.DateUtil
 import kotlinx.coroutines.CoroutineScope
@@ -29,14 +31,17 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
 
-class CheckNewBugsService : Service() {
+class CheckNewBugsService: Service() {
 
-    val newBugs= AtomicBoolean(false)
+    val newBugs = AtomicBoolean(false)
+
+    val newBugsObserver = MutableLiveData<Boolean>(false)
 
     private lateinit var channelId: String
 
-    @Inject
-    lateinit var repository: BaseRepository
+    //@Inject
+    //lateinit
+    var repository = MockRepository()//BaseRepository
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Default + serviceJob)
@@ -63,7 +68,6 @@ class CheckNewBugsService : Service() {
         serviceId = id
 
     }
-
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
@@ -99,6 +103,7 @@ class CheckNewBugsService : Service() {
                                                 updateNotification()
                                                 repository.saveBugsToDb(response.body()!!.bugs!!)
                                                 newBugs.set(true)
+                                                newBugsObserver.postValue(true)
                                             }
                                         }
                                     }
@@ -168,14 +173,14 @@ class CheckNewBugsService : Service() {
     }
 
     inner class LocalBinder : Binder() {
-        val service: CheckNewBugsService
+        val instance: CheckNewBugsService
             get() = this@CheckNewBugsService
     }
 
     companion object {
         var id = 0
         const val EXTRAS_KEY = "EXTRAS_KEY "
-        const val TIMER_PERIOD = 1000L * 60 * 10
+        const val TIMER_PERIOD = 10000L//1000L * 60 * 10
         const val INITIAL_DELAY = 1000L
         const val TIMER_PERIOD_KEY = "TIMER_PERIOD_KEY"
         const val INITIAL_DELAY_KEY = "INITIAL_DELAY_KEY"

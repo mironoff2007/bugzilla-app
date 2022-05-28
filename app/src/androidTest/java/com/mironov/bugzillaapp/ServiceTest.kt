@@ -6,6 +6,7 @@ import android.os.IBinder
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ServiceTestRule
+import com.mironov.bugzillaapp.data.MockRepository
 import com.mironov.bugzillaapp.di.DaggerTestAppComponent
 import com.mironov.bugzillaapp.di.TestAppComponent
 import com.mironov.bugzillaapp.ui.CheckNewBugsService
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit
 
     private lateinit var appComponent: TestAppComponent
 
-    protected var repository=MockRepository()
+    protected var repository = MockRepository()
 
     @Before
     @Throws(Exception::class)
@@ -61,7 +62,7 @@ import java.util.concurrent.TimeUnit
 
         val binder: IBinder = serviceRule.bindService(checkNewBugsService)
 
-        val service: CheckNewBugsService = (binder as CheckNewBugsService.LocalBinder).service
+        val service: CheckNewBugsService = (binder as CheckNewBugsService.LocalBinder).instance
 
         service.repository=repository
 
@@ -69,7 +70,7 @@ import java.util.concurrent.TimeUnit
 
         sleep(1000)
 
-        newBugs=service.newBugs.get()
+        newBugs = service.newBugs.get()
 
         service.stopService()
 

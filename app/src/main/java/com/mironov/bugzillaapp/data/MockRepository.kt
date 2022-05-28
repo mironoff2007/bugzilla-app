@@ -1,22 +1,18 @@
-package com.mironov.bugzillaapp
+package com.mironov.bugzillaapp.data
 
-import com.mironov.bugzillaapp.data.BaseRepository
-import com.mironov.bugzillaapp.data.BugsWebRepository
 import com.mironov.bugzillaapp.data.retrofit.ApiResponse
 import com.mironov.bugzillaapp.domain.Bug
 import com.mironov.bugzillaapp.domain.SortBy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
-import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Timeout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.ArrayList
 
-class MockRepository : BaseRepository {
+class MockRepository: BaseRepository {
 
     companion object {
         var bugsCount = 1
