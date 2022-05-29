@@ -153,7 +153,7 @@ class BugsListFragment : BaseFragment<FragmentBugsListBinding>() {
 
     private fun bindBugsService(){
         val intent = Intent(requireContext(), CheckNewBugsService::class.java)
-        requireActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        requireActivity().bindService(intent, serviceConnection, Context.BIND_ABOVE_CLIENT)
     }
 
     @SuppressLint("ResourceType", "NotifyDataSetChanged")
